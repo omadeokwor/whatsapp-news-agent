@@ -12,7 +12,8 @@ A daily automated WhatsApp brief that sends you stocks, Beyoncé news, AI news, 
 ## Requirements
 
 - Python 3.10+
-- [OpenAI API key](https://platform.openai.com/)
+- [OpenAI API key](https://platform.openai.com/) — for the default agent
+- [Google Gemini API key](https://aistudio.google.com/) — for the Gemini variant
 - [NewsAPI key](https://newsapi.org/)
 - [Twilio account](https://www.twilio.com/) with WhatsApp sandbox enabled
 
@@ -35,7 +36,8 @@ cp .env.example .env
 
 | Variable | Description |
 |---|---|
-| `OPENAI_API_KEY` | Your OpenAI API key |
+| `OPENAI_API_KEY` | Your OpenAI API key (used by `agent.py`) |
+| `GEMINI_API_KEY` | Your Google Gemini API key (used by `agent_genai.py`) |
 | `NEWS_API_KEY` | Your NewsAPI key |
 | `TWILIO_ACCOUNT_SID` | Twilio account SID |
 | `TWILIO_AUTH_TOKEN` | Twilio auth token |
@@ -46,12 +48,16 @@ cp .env.example .env
 
 ## Usage
 
-Run once (for testing):
+There are two variants — one powered by OpenAI and one by Google Gemini. They behave identically; pick whichever API key you have.
+
+**OpenAI variant:**
 ```bash
-python agent.py --once
+python agent.py --once      # run once (for testing)
+python agent.py             # run on a schedule (sends daily at 8 AM)
 ```
 
-Run on a schedule (sends daily at 8 AM):
+**Gemini variant:**
 ```bash
-python agent.py
+python agent_genai.py --once
+python agent_genai.py
 ```
