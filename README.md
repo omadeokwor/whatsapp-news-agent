@@ -13,8 +13,8 @@ A daily automated WhatsApp brief that sends you stocks, Beyoncé news, AI news, 
 
 - Python 3.10+
 - [OpenAI API key](https://platform.openai.com/) — for the default agent
-- [Google Gemini API key](https://aistudio.google.com/) — for the Gemini variant
-- [NewsAPI key](https://newsapi.org/)
+- [Google Gemini API key](https://aistudio.google.com/) — for the Gemini variants
+- [NewsAPI key](https://newsapi.org/) — for `agent.py` and `agent_genai.py`
 - [Twilio account](https://www.twilio.com/) with WhatsApp sandbox enabled
 
 ## Setup
@@ -37,7 +37,7 @@ cp .env.example .env
 | Variable | Description |
 |---|---|
 | `OPENAI_API_KEY` | Your OpenAI API key (used by `agent.py`) |
-| `GEMINI_API_KEY` | Your Google Gemini API key (used by `agent_genai.py`) |
+| `GOOGLE_API_KEY` | Your Google Gemini API key (used by `agent_genai.py` and `agent_loop.py`) |
 | `NEWS_API_KEY` | Your NewsAPI key |
 | `TWILIO_ACCOUNT_SID` | Twilio account SID |
 | `TWILIO_AUTH_TOKEN` | Twilio auth token |
@@ -48,16 +48,22 @@ cp .env.example .env
 
 ## Usage
 
-There are two variants — one powered by OpenAI and one by Google Gemini. They behave identically; pick whichever API key you have.
+There are three variants. All send the same brief; they differ in how they work internally.
 
-**OpenAI variant:**
+**OpenAI variant** (`agent.py`) — fixed pipeline using OpenAI + NewsAPI:
 ```bash
 python agent.py --once      # run once (for testing)
 python agent.py             # run on a schedule (sends daily at 8 AM)
 ```
 
-**Gemini variant:**
+**Gemini variant** (`agent_genai.py`) — fixed pipeline using Gemini + NewsAPI:
 ```bash
 python agent_genai.py --once
 python agent_genai.py
+```
+
+**Gemini agentic loop** (`agent_loop.py`) — true agent: Gemini drives its own reasoning loop, uses built-in Google Search (no NewsAPI needed), and decides when to send the message:
+```bash
+python agent_loop.py --once
+python agent_loop.py
 ```

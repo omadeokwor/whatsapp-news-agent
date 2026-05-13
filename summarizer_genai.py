@@ -2,13 +2,12 @@
 Use Google Gemini to turn raw stock + news data into a punchy WhatsApp message.
 """
 import os
-import google.generativeai as genai
+from google import genai
 from dotenv import load_dotenv
 
 load_dotenv()
 
-genai.configure(api_key=os.environ["GOOGLE_API_KEY"])
-_model = genai.GenerativeModel("gemini-2.5-flash")
+_client = genai.Client(api_key=os.environ["GOOGLE_API_KEY"])
 
 _PROMPT = """You are writing a daily WhatsApp brief for one person. Make it casual, punchy, and fun.
 Use WhatsApp bold formatting (*bold*) for headers. Keep the whole message under 1200 characters.
@@ -40,13 +39,9 @@ def build_message(stocks: list[dict], news: list[dict]) -> str:
         for n in news
     )
 
-    resp = _model.generate_content(
-        _PROMPT.format(stocks=stocks_text, news=news_text),
-        generation_config={"max_output_tokens": 2048, "temperature": 0.7},
+    resp = _client.models.generate_content(
+        model="gemini-2.5-flash",
+        contents=_PROMPT.format(stocks=stocks_text, news=news_text),
+        config={"max_output_tokens": 2048, "temperature": 0.7},
     )
-    parts = [
-        part.text
-        for part in resp.candidates[0].content.parts
-        if part.text and not getattr(part, "thought", False)
-    ]
-    return "".join(parts) if parts else resp.text
+    return resp.text
